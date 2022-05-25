@@ -2,7 +2,7 @@
 
 var Gun = require('gun');
 var http = require('http');
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8090;
 var fs = require('fs');
 
 // Listens on /gun.js route.
