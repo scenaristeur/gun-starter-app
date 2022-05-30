@@ -50,3 +50,6 @@ For reference, here are gun apps written with...
 
 ## Questions
 Have more questions? Send 'em our way on the [gitter channel](http://gitter.im/amark/gun/).
+
+# private
+- https://github.com/amark/gun/blob/master/examples/basic/private.html
