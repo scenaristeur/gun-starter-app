@@ -24,7 +24,7 @@ $ npm start
 > Under the hood, this is just running `node server.js`
 
 ## Trying it
-In two browser windows, open `localhost:8080/index.html`.
+In two browser windows, open `localhost:8090/index.html`.
 
 > Make sure your server is running!
 

@@ -34,10 +34,27 @@
 	<button onclick="show()">Show</button>
 	<button onclick="create()">Create</button>
 
+	<hr>
+
+	<input id="name" placeholder="name" />
+	<input id="pass" placeholder="pass" type="password" />
+	<small><i>at least 8 chars</i></small><br><br>
+
+	<button onclick="inscription()">Inscription</button>
+	<button onclick="connexion()">Connexion</button>
+	<hr>
+	<textarea id="message"> </textarea>
+	<button onclick="envoyer()">Envoyer</button>
+
+<ul id="messages"></ul>
+
+
 
 	<!-- Loads gun -->
 	<script src='http://localhost:8090/gun/gun.js'></script>
 	<script src='http://localhost:8090/gun/lib/path.js'></script>
+	<script src="http://localhost:8090/gun/sea.js"></script>
+	<script src="http://localhost:8090/gun/lib/webrtc.js"></script>
 
 	<script>
 
@@ -46,114 +63,166 @@
 		'http://localhost:8090/gun',
 	]);
 
+	var user = gun.user();
+
 	// Reads key 'data'.
 	var data = gun.get('data');
 
 	// Exposed so the JS console can see it.
 	window.data = data;
 
+	gun.on('auth', function(){
+	     // $('#sign').hide();
+			 let ul = document.getElementById("messages")
+			 ul.innerHTML = ""
+	      user.get('said').map().once(UI);
+	    });
 
-	function create(){
-		console.log("create")
-	}
+			function UI(say, id){
+				console.log(say, id)
+				let li = document.createElement("li")
+				li.id = id
+				li.innerHTML = say
+				let ul = document.getElementById("messages")
+				ul.prepend(li)
+	      // var li = $('#' + id).get(0) || $('<li>').attr('id', id).appendTo('ul');
+	      // $(li).text(say);
+	    };
 
-	function command(){
-		let command = {}
-		command.fullCommand = document.getElementById("command_input").value.trim()
-		console.log("command", command)
-		document.getElementById("command_input").value = ""
-		console.log("command", command)
-		command.commandArray = command.fullCommand.split(" ")
-		console.log("command", command)
-		command.first = command.commandArray[0]
-		console.log("command", command)
-		if(command.commandArray[1] == '='){
-			set(command)
-		}
-		if(command.commandArray[0] == 'cat'){
-			cat(command)
-		}
-	}
+	function inscription(){
+		let name = document.getElementById("name").value
+		let pass = document.getElementById("pass").value
+		console.log(name, pass)
 
-
-	function cat(command, write){
-		let object = command.commandArray[1]
-
-		console.log("lecture de ", object )
-		let path = object.split('.')
-		let currentNode = undefined
-		for (const p of path){
-			console.log(p)
-			currentNode = currentNode == undefined ?  gun.get(p) : currentNode.get(p)
-			console.log("current",currentNode)
-		}
-		currentNode.once(function(data, key){
-			console.log( key, data);
-			console.log('the value is', data)
-		});
-
-	}
-
-	function set(command, overwrite = true){
-		let object = command.commandArray[0]
-		// remove object & equal sign
-		command.commandArray.splice(0, 2)
-		let value = command.commandArray.join(' ')
-		console.log("affectation de ", value , "dans", object )
-		let path = object.split('.')
-		let currentNode = undefined
-		for (const p of path){
-			console.log(p)
-			currentNode = currentNode == undefined ?  gun.get(p) : currentNode.get(p)
-			console.log("current",currentNode)
-		}
-		currentNode.once(function(data, key){
-			console.log( key, data);
-			console.log('the value is', data)
-		});
-
-		try {
-			value = JSON.parse(value)
-		}catch(e){
-			console.log(e)
-		}
-		finally{
-			currentNode.put(value);
-		}
-
-
-
-	}
-
-
-
-	function show(){
-		console.log("data", data)
-		data.get('message').once(function(data, key){
-			console.log( key, data);
+		user.create(name, pass, function(result){
+			if(result.err != undefined){
+				alert(result.err)
+			}else{
+				console.log("user created",result)
+			}
 		});
 	}
 
-
-	(function () {
-
-
-
-		console.log('Gun reference exposed as %cwindow.data', 'color: red');
-
-		// Writes a value to the key 'data'.
-		data.put({ message: 'Hello world!' });
-
-		// Listen for real-time change events.
-		data.path('message').on(function (message) {
-			console.log('Message:', message);
+	function connexion(){
+		let name = document.getElementById("name").value
+		let pass = document.getElementById("pass").value
+		user.auth(name, pass, function(result){
+			if(result.err != undefined){
+				alert(result.err)
+			}else{
+				console.log("user connected",result)
+				alert (" connexion OK")
+			}
 		});
+	}
 
-		data.on(function (modif) {
-			console.log('modif:', modif);
-		});
+	function envoyer(){
+		let message = document.getElementById("message").value
+		if(!user.is){
+			alert("no user connected")
+			return }
+			user.get('said').set(message);
+			document.getElementById("message").value = ""
+		}
 
-	}())
-	</script>
-</body>
-</html>
+
+
+		function create(){
+			console.log("create")
+		}
+
+		function command(){
+			let command = {}
+			command.fullCommand = document.getElementById("command_input").value.trim()
+			console.log("command", command)
+			document.getElementById("command_input").value = ""
+			console.log("command", command)
+			command.commandArray = command.fullCommand.split(" ")
+			console.log("command", command)
+			command.first = command.commandArray[0]
+			console.log("command", command)
+			if(command.commandArray[1] == '='){
+				set(command)
+			}
+			if(command.commandArray[0] == 'cat'){
+				cat(command)
+			}
+		}
+
+
+		function cat(command, write){
+			let object = command.commandArray[1]
+
+			console.log("lecture de ", object )
+			let path = object.split('.')
+			let currentNode = undefined
+			for (const p of path){
+				console.log(p)
+				currentNode = currentNode == undefined ?  gun.get(p) : currentNode.get(p)
+				console.log("current",currentNode)
+			}
+			currentNode.once(function(data, key){
+				console.log( key, data);
+				console.log('the value is', data)
+			});
+
+		}
+
+		function set(command, overwrite = true){
+			let object = command.commandArray[0]
+			// remove object & equal sign
+			command.commandArray.splice(0, 2)
+			let value = command.commandArray.join(' ')
+			console.log("affectation de ", value , "dans", object )
+			let path = object.split('.')
+			let currentNode = undefined
+			for (const p of path){
+				console.log(p)
+				currentNode = currentNode == undefined ?  gun.get(p) : currentNode.get(p)
+				console.log("current",currentNode)
+			}
+			currentNode.once(function(data, key){
+				console.log( key, data);
+				console.log('the value is', data)
+			});
+
+			try {
+				value = JSON.parse(value)
+			}catch(e){
+				console.log(e)
+			}
+			finally{
+				currentNode.put(value);
+			}
+		}
+
+		function show(){
+			console.log("data", data)
+			data.get('message').once(function(data, key){
+				console.log( key, data);
+			});
+		}
+
+
+		(function () {
+
+
+
+			console.log('Gun reference exposed as %cwindow.data', 'color: red');
+
+			// Writes a value to the key 'data'.
+			data.put({ message: 'Hello world!' });
+
+			// Listen for real-time change events.
+			data.path('message').on(function (message) {
+				console.log('Message:', message);
+			});
+
+			data.on(function (modif) {
+				console.log('modif:', modif);
+			});
+
+		}())
+		</script>
+	</body>
+	</html>
