@@ -37,19 +37,25 @@ data.put({
 })
 ```
 
-## Applying it
-The code provided here is just the bare basics. It's intentionally framework agnostic to keep the example simple and reusable.
 
-Now that you've got real-time data sync and a way to listen for changes, you can plug those change events into a UI tool/framework (like jQuery, React, Angular, etc.)
-
-For reference, here are gun apps written with...
-
-- [React](https://github.com/PsychoLlama/connect-four)
-- [jQuery](https://github.com/alvaro911/chat)
-- [Polymer](https://github.com/Stefdv/Gun-Server-CMS-App)
 
 ## Questions
 Have more questions? Send 'em our way on the [gitter channel](http://gitter.im/amark/gun/).
 
 # private
-- https://github.com/amark/gun/blob/master/examples/basic/private.html
+- https://www.youtube.com/watch?v=ZiELAFqNSLQ with code
+- https://github.com/amark/gun/blob/master/examples/basic/private.html or https://gist.github.com/amark/44b8110a3c848917d6c738f9c3a36e24
+
+# default Vite+vue+gun
+- https://www.youtube.com/watch?v=HC4MfirOPq0
+
+# gun-util
+- https://github.com/diatche/gun-util#GunUser
+
+# gun examples users /groups
+- https://gist.github.com/alterx/4be465d63fc23e37f95639b0b8ea1739
+
+# read /write permissions
+- https://github.com/Dletta/rwperm/blob/master/main.html
+# meething
+- https://github.com/meething/meething
